@@ -1,0 +1,170 @@
+origin,destination,estimated_driving_km,travel_time (highways only, 100km/hr )
+Delft,Delft,0.0,0.0
+Delft,Amsterdam,65.3,39.2
+Delft,Rotterdam,15.3,9.2
+Delft,The Hague,9.1,5.5
+Delft,Utrecht,63.6,38.2
+Delft,Eindhoven,119.3,71.6
+Delft,Tilburg,85.9,51.5
+Delft,Almere,87.0,52.2
+Delft,Groningen,240.8,144.5
+Delft,Breda,67.8,40.7
+Delft,Nijmegen,124.7,74.8
+Delft,Leeuwarden,197.1,118.3
+Delft,Maastricht,190.5,114.3
+Amsterdam,Delft,65.3,39.2
+Amsterdam,Amsterdam,0.0,0.0
+Amsterdam,Rotterdam,68.7,41.2
+Amsterdam,The Hague,63.3,38.0
+Amsterdam,Utrecht,41.0,24.6
+Amsterdam,Eindhoven,132.0,79.2
+Amsterdam,Tilburg,109.4,65.6
+Amsterdam,Almere,29.5,17.7
+Amsterdam,Groningen,175.8,105.5
+Amsterdam,Breda,106.8,64.1
+Amsterdam,Nijmegen,106.5,63.9
+Amsterdam,Leeuwarden,132.7,79.6
+Amsterdam,Maastricht,212.6,127.6
+Rotterdam,Delft,15.3,9.2
+Rotterdam,Amsterdam,68.7,41.2
+Rotterdam,Rotterdam,0.0,0.0
+Rotterdam,The Hague,24.3,14.6
+Rotterdam,Utrecht,57.3,34.4
+Rotterdam,Eindhoven,104.3,62.6
+Rotterdam,Tilburg,70.7,42.4
+Rotterdam,Almere,86.0,51.6
+Rotterdam,Groningen,242.0,145.2
+Rotterdam,Breda,52.8,31.7
+Rotterdam,Nijmegen,113.0,67.8
+Rotterdam,Leeuwarden,201.3,120.8
+Rotterdam,Maastricht,175.2,105.1
+The Hague,Delft,9.1,5.5
+The Hague,Amsterdam,63.3,38.0
+The Hague,Rotterdam,24.3,14.6
+The Hague,The Hague,0.0,0.0
+The Hague,Utrecht,67.4,40.4
+The Hague,Eindhoven,127.9,76.7
+The Hague,Tilburg,94.7,56.8
+The Hague,Almere,87.2,52.3
+The Hague,Groningen,239.0,143.4
+The Hague,Breda,76.9,46.1
+The Hague,Nijmegen,131.0,78.6
+The Hague,Leeuwarden,193.6,116.2
+The Hague,Maastricht,199.5,119.7
+Utrecht,Delft,63.6,38.2
+Utrecht,Amsterdam,41.0,24.6
+Utrecht,Rotterdam,57.3,34.4
+Utrecht,The Hague,67.4,40.4
+Utrecht,Utrecht,0.0,0.0
+Utrecht,Eindhoven,91.3,54.8
+Utrecht,Tilburg,71.5,42.9
+Utrecht,Almere,36.6,22.0
+Utrecht,Groningen,190.7,114.4
+Utrecht,Breda,75.1,45.1
+Utrecht,Nijmegen,69.6,41.8
+Utrecht,Leeuwarden,158.0,94.8
+Utrecht,Maastricht,172.0,103.2
+Eindhoven,Delft,119.3,71.6
+Eindhoven,Amsterdam,132.0,79.2
+Eindhoven,Rotterdam,104.3,62.6
+Eindhoven,The Hague,127.9,76.7
+Eindhoven,Utrecht,91.3,54.8
+Eindhoven,Eindhoven,0.0,0.0
+Eindhoven,Tilburg,34.9,20.9
+Eindhoven,Almere,122.5,73.5
+Eindhoven,Groningen,253.5,152.1
+Eindhoven,Breda,60.8,36.5
+Eindhoven,Nijmegen,58.1,34.9
+Eindhoven,Leeuwarden,236.3,141.8
+Eindhoven,Maastricht,80.9,48.5
+Tilburg,Delft,85.9,51.5
+Tilburg,Amsterdam,109.4,65.6
+Tilburg,Rotterdam,70.7,42.4
+Tilburg,The Hague,94.7,56.8
+Tilburg,Utrecht,71.5,42.9
+Tilburg,Eindhoven,34.9,20.9
+Tilburg,Tilburg,0.0,0.0
+Tilburg,Almere,107.1,64.3
+Tilburg,Groningen,252.4,151.4
+Tilburg,Breda,26.9,16.1
+Tilburg,Nijmegen,70.6,42.4
+Tilburg,Leeuwarden,227.0,136.2
+Tilburg,Maastricht,106.5,63.9
+Almere,Delft,87.0,52.2
+Almere,Amsterdam,29.5,17.7
+Almere,Rotterdam,86.0,51.6
+Almere,The Hague,87.2,52.3
+Almere,Utrecht,36.6,22.0
+Almere,Eindhoven,122.5,73.5
+Almere,Tilburg,107.1,64.3
+Almere,Almere,0.0,0.0
+Almere,Groningen,156.4,93.8
+Almere,Breda,111.7,67.0
+Almere,Nijmegen,85.8,51.5
+Almere,Leeuwarden,121.4,72.8
+Almere,Maastricht,203.2,121.9
+Groningen,Delft,240.8,144.5
+Groningen,Amsterdam,175.8,105.5
+Groningen,Rotterdam,242.0,145.2
+Groningen,The Hague,239.0,143.4
+Groningen,Utrecht,190.7,114.4
+Groningen,Eindhoven,253.5,152.1
+Groningen,Tilburg,252.4,151.4
+Groningen,Almere,156.4,93.8
+Groningen,Groningen,0.0,0.0
+Groningen,Breda,264.1,158.5
+Groningen,Nijmegen,196.8,118.1
+Groningen,Leeuwarden,61.3,36.8
+Groningen,Maastricht,324.0,194.4
+Breda,Delft,67.8,40.7
+Breda,Amsterdam,106.8,64.1
+Breda,Rotterdam,52.8,31.7
+Breda,The Hague,76.9,46.1
+Breda,Utrecht,75.1,45.1
+Breda,Eindhoven,60.8,36.5
+Breda,Tilburg,26.9,16.1
+Breda,Almere,111.7,67.0
+Breda,Groningen,264.1,158.5
+Breda,Breda,0.0,0.0
+Breda,Nijmegen,94.1,56.5
+Breda,Leeuwarden,233.1,139.9
+Breda,Maastricht,123.3,74.0
+Nijmegen,Delft,124.7,74.8
+Nijmegen,Amsterdam,106.5,63.9
+Nijmegen,Rotterdam,113.0,67.8
+Nijmegen,The Hague,131.0,78.6
+Nijmegen,Utrecht,69.6,41.8
+Nijmegen,Eindhoven,58.1,34.9
+Nijmegen,Tilburg,70.6,42.4
+Nijmegen,Almere,85.8,51.5
+Nijmegen,Groningen,196.8,118.1
+Nijmegen,Breda,94.1,56.5
+Nijmegen,Nijmegen,0.0,0.0
+Nijmegen,Leeuwarden,185.3,111.2
+Nijmegen,Maastricht,128.8,77.3
+Leeuwarden,Delft,197.1,118.3
+Leeuwarden,Amsterdam,132.7,79.6
+Leeuwarden,Rotterdam,201.3,120.8
+Leeuwarden,The Hague,193.6,116.2
+Leeuwarden,Utrecht,158.0,94.8
+Leeuwarden,Eindhoven,236.3,141.8
+Leeuwarden,Tilburg,227.0,136.2
+Leeuwarden,Almere,121.4,72.8
+Leeuwarden,Groningen,61.3,36.8
+Leeuwarden,Breda,233.1,139.9
+Leeuwarden,Nijmegen,185.3,111.2
+Leeuwarden,Leeuwarden,0.0,0.0
+Leeuwarden,Maastricht,313.7,188.2
+Maastricht,Delft,190.5,114.3
+Maastricht,Amsterdam,212.6,127.6
+Maastricht,Rotterdam,175.2,105.1
+Maastricht,The Hague,199.5,119.7
+Maastricht,Utrecht,172.0,103.2
+Maastricht,Eindhoven,80.9,48.5
+Maastricht,Tilburg,106.5,63.9
+Maastricht,Almere,203.2,121.9
+Maastricht,Groningen,324.0,194.4
+Maastricht,Breda,123.3,74.0
+Maastricht,Nijmegen,128.8,77.3
+Maastricht,Leeuwarden,313.7,188.2
+Maastricht,Maastricht,0.0,0.0
