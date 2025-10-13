@@ -1,15 +1,15 @@
-﻿City;Roadtaxes per city (per province in Euro);Car insurance per city ( in euro)
-Amsterdam;22.33333333;65.05
-Rotterdam;24.66666667;92.21
-Den Haag;24.66666667;75.02
-Utrecht;23;67.88
-Eindhoven;23;57.4
-Groningen;24;40.94
-Tilburg;23;57.4
-Almere;23;60.99
-Breda;23;57.4
-Nijmegen;24.66666667;50.51
-Leeuwarden;24.66666667;37.41
-Maastricht;23.33333333;54.91
+﻿City;Roadtaxes per city (in Euro/month);Car insurance per city (in euro/month);Parking permit per city (in euro/month)
+Amsterdam;22.33333333;65.05;6.22
+Rotterdam;24.66666667;92.21;9.20
+Den Haag;24.66666667;75.02;8.08
+Utrecht;23;67.88;31.67
+Eindhoven;23;57.4;11.39
+Groningen;24;40.94;10.95
+Tilburg;23;57.4;13.33
+Almere;23;60.99;0.00
+Breda;23;57.4;0.00
+Nijmegen;24.66666667;50.51;1.00
+Leeuwarden;24.66666667;37.41;10.33
+Maastricht;23.33333333;54.91;29.00
 ;;
 ;;
