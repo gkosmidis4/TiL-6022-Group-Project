@@ -79,7 +79,7 @@ os.makedirs(FIG_DIR, exist_ok=True)
 SHOW_PLOTS = False
 
 # days per month (average working days to Delft); changeable variable
-DAYS_PER_MONTH = 23
+DAYS_PER_MONTH = 18
 
 
 def compute_ticks(minv, maxv, target_ticks=8):
