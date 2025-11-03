@@ -41,14 +41,16 @@ def train_cost_per_city(df: 'pd.DataFrame') -> 'pd.Series':
 
 
 def Train_Travel_Time_per_city(df: 'pd.DataFrame') -> 'pd.Series':
-  """Return total travel time per city (train travel time + 10 minutes bike ride).
+  """Return train travel time per city (minutes).
 
-  Expects 'city' and 'travel_time_min' columns. Returns minutes as numeric.
+  Adds 10 minutes to the reported train travel time to represent the bike
+  transfer from Delft station to campus (one-way). Returns minutes as numeric.
   """
   if 'city' not in df.columns or 'travel_time_min' not in df.columns:
     raise KeyError("DataFrame must contain 'city' and 'travel_time_min' columns")
-  # return raw train travel time (minutes) without additional bike time
-  total = pd.to_numeric(df['travel_time_min'], errors='coerce')
+  base = pd.to_numeric(df['travel_time_min'], errors='coerce')
+  # add 10 minutes one-way for the bike transfer to/from campus
+  total = base + 10
   return pd.Series(total.values, index=df['city'].values, name='train_travel_time_min')
 
 
@@ -71,7 +73,7 @@ except Exception as e:
 # --- simplified plotting -------------------------------------------------
 import os
 
-FIG_DIR = 'figures'
+FIG_DIR = os.path.join('figures', 'train')
 os.makedirs(FIG_DIR, exist_ok=True)
 # Set to True if you want the script to show plots interactively after saving.
 # In some environments (headless servers, or certain IDE terminals) showing
@@ -190,7 +192,8 @@ plot_df = df[['city', 'distance_km', 'ns_fare_eur', 'travel_time_min']].dropna()
 cities = plot_df['city'].astype(str).values
 distance = plot_df['distance_km'].values
 cost = plot_df['ns_fare_eur'].values
-time = plot_df['travel_time_min'].values
+# add 10 minutes one-way to represent bike transfer station <-> campus
+time = plot_df['travel_time_min'].values + 10
 
 # Print functions (very simple) so output appears in the terminal
 '''
@@ -213,17 +216,7 @@ def print_distance_vs_time(df):
 '''
 
 
-# 1) Cost vs Distance (cost on y-axis, distance on x-axis)
-simple_scatter(distance, cost, cities, 'Distance (km)', 'Train cost (EUR)',
-               'Cost vs Distance (per city per trip to Delft)', 'cost_vs_distance.png')
-
-# 2) Cost vs Time (cost on y-axis, time on x-axis)
-simple_scatter(time, cost, cities, 'Train travel time (min)', 'Train cost (EUR)',
-               'Cost vs Time (per city per trip to Delft)', 'cost_vs_time.png')
-
-# 3) Distance vs Time (distance on y-axis, time on x-axis)
-simple_scatter(time, distance, cities, 'Train travel time (min)', 'Distance (km)',
-               'Distance vs Time (per city per trip to Delft)', 'distance_vs_time.png')
+# (Removed extra exploratory plots; generate only the simplified charts requested)
 
 # Create bar charts with cities on x-axis
 def simple_bar(values, city_names, ylabel, title, fname):
@@ -285,13 +278,9 @@ cost_rt = cost * 2
 simple_bar(time_rt, cities, 'Travel time (minutes)',
           'Train Travel Time by City (per roundtrip to and from Delft)', 'time_bars_roundtrip.png')
 
-# 2. Distance bar chart (roundtrip)
-simple_bar(distance_rt, cities, 'Distance (km)',
-          'Distance by City (per roundtrip to and from Delft)', 'distance_bars_roundtrip.png')
-
-# 3. Cost bar chart (roundtrip)
+# 2. Cost bar chart (roundtrip)
 simple_bar(cost_rt, cities, 'Cost (EUR)',
-          'Train Cost by City (per roundtrip to and from Delft)', 'cost_bars_roundtrip.png')
+          'Train Cost by City (per roundtrip to and from Delft) (EUR)', 'cost_bars_roundtrip.png')
 
 
 # --- Monthly bar charts (readable y-axis) --------------------------------
@@ -302,6 +291,12 @@ simple_bar(cost_rt, cities, 'Cost (EUR)',
 # Compute monthly values based on round-trip per day multiplied by DAYS_PER_MONTH
 time_month = time_rt * DAYS_PER_MONTH
 distance_month = distance_rt * DAYS_PER_MONTH
+
+# add monthly bike cost: 17.90 EUR per month -> convert to per day when adding to daily
+MONTHLY_BIKE_COST = 17.90
+DAILY_BIKE_COST = MONTHLY_BIKE_COST / 30.0
+# add daily bike cost once per day to the roundtrip cost (daily addition)
+cost_rt = cost_rt + DAILY_BIKE_COST
 cost_month = cost_rt * DAYS_PER_MONTH
 
 # Generate monthly bar charts (readable y-axis)
@@ -309,11 +304,8 @@ print('\nGenerating monthly bar charts...')
 simple_bar(time_month, cities, 'Travel time per month (minutes)',
            'Train Travel Time per Month by City', 'time_bars_month.png')
 
-simple_bar(distance_month, cities, 'Distance per month (km)',
-           'Distance per Month by City', 'distance_bars_month.png')
-
 simple_bar(cost_month, cities, 'Cost per month (EUR)',
-           'Cost per Month by City', 'cost_bars_month.png')
+           'Cost per Month by City (EUR)', 'cost_bars_month.png')
 
 # 1) Train cost per month (y) vs travel time per day (x)
 simple_scatter(time, cost_month, cities,
@@ -324,16 +316,7 @@ simple_scatter(time, cost_month, cities,
 simple_scatter(time_month, cost_month, cities,
                'Train travel time per month (min)', 'Train cost per month (EUR)',
                'Cost per month vs time per month', 'cost_month_vs_time_month.png')
-
-# 3) Distance per month (y) vs travel time per month (x)
-simple_scatter(time_month, distance_month, cities,
-               'Train travel time per month (min)', 'Distance per month (km)',
-               'Distance per month vs time per month', 'distance_month_vs_time_month.png')
-
-# 4) Cost per month (y) vs distance per month (x)
-simple_scatter(distance_month, cost_month, cities,
-               'Distance per month (km)', 'Train cost per month (EUR)',
-               'Cost per month vs distance per month', 'cost_month_vs_distance_month.png')
+ 
 
 
 
