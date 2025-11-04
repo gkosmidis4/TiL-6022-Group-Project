@@ -7,7 +7,7 @@ import os
 # Resolve data file path relative to this script so the script works
 # regardless of the current working directory when invoked.
 base_dir = os.path.dirname(os.path.abspath(__file__))
-data_file = os.path.join(base_dir, 'data', 'TrainDistancesDelft_NSPrices_NSTravelTime.csv')
+data_file = os.path.join(base_dir, 'processed_data', 'TrainDistancesDelft_NSPrices_NSTravelTime.csv')
 if not os.path.exists(data_file):
   raise FileNotFoundError(f"Required data file not found: {data_file}\n" \
               "Make sure you run the script from the project folder or that the file exists.")
@@ -365,7 +365,7 @@ summary_df = pd.DataFrame({
   'cost_per_month_eur': cost_month
 })
 
-out_file = os.path.join(base_dir, 'data', 'train_monthly_summary.csv')
+out_file = os.path.join(base_dir, 'processed_data', 'train_monthly_summary.csv')
 summary_df.to_csv(out_file, index=False)
 print(f"Saved simplified monthly summary CSV: {out_file}")
 # If daluren discount is enabled, create a separate CSV applying 40% discount
