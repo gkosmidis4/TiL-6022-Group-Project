@@ -7,7 +7,7 @@ import os
 # Resolve data file path relative to this script so the script works
 # regardless of the current working directory when invoked.
 base_dir = os.path.dirname(os.path.abspath(__file__))
-data_file = os.path.join(base_dir, 'processed_data', 'TrainDistancesDelft_NSPrices_NSTravelTime.csv')
+data_file = os.path.join(base_dir, '..', 'processed_data', 'TrainDistancesDelft_NSPrices_NSTravelTime.csv')
 if not os.path.exists(data_file):
   raise FileNotFoundError(f"Required data file not found: {data_file}\n" \
               "Make sure you run the script from the project folder or that the file exists.")
@@ -80,7 +80,7 @@ except Exception as e:
 # --- simplified plotting -------------------------------------------------
 import os
 
-FIG_DIR = os.path.join('figures', 'train')
+FIG_DIR = os.path.join(base_dir, '..', 'figures', 'train')
 os.makedirs(FIG_DIR, exist_ok=True)
 # Set to True if you want the script to show plots interactively after saving.
 # In some environments (headless servers, or certain IDE terminals) showing
@@ -365,7 +365,7 @@ summary_df = pd.DataFrame({
   'cost_per_month_eur': cost_month
 })
 
-out_file = os.path.join(base_dir, 'processed_data', 'train_monthly_summary.csv')
+out_file = os.path.join(base_dir, '..', 'processed_data', 'train_monthly_summary.csv')
 summary_df.to_csv(out_file, index=False)
 print(f"Saved simplified monthly summary CSV: {out_file}")
 # If daluren discount is enabled, create a separate CSV applying 40% discount
@@ -382,7 +382,7 @@ if DALUREN_ENABLED:
     'time_per_month_min': time_month,
     'cost_per_month_eur_daluren': cost_month_daluren
   })
-  dal_file = os.path.join(base_dir, 'data', 'daluren_40_discount.csv')
+  dal_file = os.path.join(base_dir, '..', 'processed_data', 'daluren_40_discount.csv')
   daluren_df.to_csv(dal_file, index=False)
   print(f"Saved DALUREN 40% discount CSV: {dal_file}")
   
@@ -400,7 +400,7 @@ if ALTIJD_KORTING_ENABLED:
     'time_per_month_min': time_month,
     'cost_per_month_eur_altijd_peak20': cost_month_altijd
   })
-  altijd_file = os.path.join(base_dir, 'data', 'altijd_20_peak_discount.csv')
+  altijd_file = os.path.join(base_dir, '..', 'processed_data', 'altijd_20_peak_discount.csv')
   altijd_df.to_csv(altijd_file, index=False)
   print(f"Saved ALTIJD 20% peak discount CSV: {altijd_file}")
  
