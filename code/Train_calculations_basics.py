@@ -7,7 +7,7 @@ import os
 # Resolve data file path relative to this script so the script works
 # regardless of the current working directory when invoked.
 base_dir = os.path.dirname(os.path.abspath(__file__))
-data_file = os.path.join(base_dir, 'data', 'TrainDistancesDelft_NSPrices_NSTravelTime.csv')
+data_file = os.path.join(base_dir, '..', 'processed_data', 'TrainDistancesDelft_NSPrices_NSTravelTime.csv')
 if not os.path.exists(data_file):
   raise FileNotFoundError(f"Required data file not found: {data_file}\n" \
               "Make sure you run the script from the project folder or that the file exists.")
@@ -80,7 +80,7 @@ except Exception as e:
 # --- simplified plotting -------------------------------------------------
 import os
 
-FIG_DIR = os.path.join('figures', 'train')
+FIG_DIR = os.path.join(base_dir, '..', 'figures', 'train')
 os.makedirs(FIG_DIR, exist_ok=True)
 # Set to True if you want the script to show plots interactively after saving.
 # In some environments (headless servers, or certain IDE terminals) showing
@@ -101,7 +101,7 @@ DALUREN_DISCOUNT = 0.40
 
 # 2) altijd korting subscription: 20% discount during peak hours (we consider only the 20%)
 # costs 28.50 EUR/month
-ALTIJD_KORTING_ENABLED = False
+ALTIJD_KORTING_ENABLED = True
 ALTIJD_COST_PER_MONTH = 28.50
 ALTIJD_PEAK_DISCOUNT = 0.20
 
@@ -365,9 +365,44 @@ summary_df = pd.DataFrame({
   'cost_per_month_eur': cost_month
 })
 
-out_file = os.path.join(base_dir, 'data', 'train_monthly_summary.csv')
+out_file = os.path.join(base_dir, '..', 'processed_data', 'train_monthly_summary.csv')
 summary_df.to_csv(out_file, index=False)
 print(f"Saved simplified monthly summary CSV: {out_file}")
+# If daluren discount is enabled, create a separate CSV applying 40% discount
+if DALUREN_ENABLED:
+  # apply 40% discount to the NS fare component (per one-way trip)
+  fare = plot_df['ns_fare_eur'].values
+  fare_discounted = fare * (1.0 - DALUREN_DISCOUNT)
+  # daily roundtrip cost: discounted fare *2 + daily bike cost
+  cost_rt_daluren = fare_discounted * 2 + DAILY_BIKE_COST
+  # monthly cost plus the DALUREN subscription fee (one-time per month)
+  cost_month_daluren = cost_rt_daluren * DAYS_PER_MONTH + DALUREN_COST_PER_MONTH
+  daluren_df = pd.DataFrame({
+    'city': cities,
+    'time_per_month_min': time_month,
+    'cost_per_month_eur_daluren': cost_month_daluren
+  })
+  dal_file = os.path.join(base_dir, '..', 'processed_data', 'daluren_40_discount.csv')
+  daluren_df.to_csv(dal_file, index=False)
+  print(f"Saved DALUREN 40% discount CSV: {dal_file}")
+  
+# If ALTIJD subscription is enabled, create a separate CSV applying the peak-hour 20% discount
+if ALTIJD_KORTING_ENABLED:
+  # apply 20% discount to the NS fare component (per one-way trip)
+  fare = plot_df['ns_fare_eur'].values
+  fare_discounted_peak = fare * (1.0 - ALTIJD_PEAK_DISCOUNT)
+  # daily roundtrip cost: discounted fare *2 + daily bike cost
+  cost_rt_altijd = fare_discounted_peak * 2 + DAILY_BIKE_COST
+  # monthly total plus subscription fee
+  cost_month_altijd = cost_rt_altijd * DAYS_PER_MONTH + ALTIJD_COST_PER_MONTH
+  altijd_df = pd.DataFrame({
+    'city': cities,
+    'time_per_month_min': time_month,
+    'cost_per_month_eur_altijd_peak20': cost_month_altijd
+  })
+  altijd_file = os.path.join(base_dir, '..', 'processed_data', 'altijd_20_peak_discount.csv')
+  altijd_df.to_csv(altijd_file, index=False)
+  print(f"Saved ALTIJD 20% peak discount CSV: {altijd_file}")
  
 
 
