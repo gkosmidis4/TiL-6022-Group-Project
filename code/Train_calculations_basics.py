@@ -3,8 +3,17 @@ import numpy as np
 import math
 
 import pandas as pd
-# use forward slashes to avoid escape-sequence warnings on Windows
-df = pd.read_csv('data/TrainDistancesDelft_NSPrices_NSTravelTime.csv')
+import os
+# Resolve data file path relative to this script so the script works
+# regardless of the current working directory when invoked.
+base_dir = os.path.dirname(os.path.abspath(__file__))
+# The repository contains the raw input under a directory named exactly 'base data'
+# (note the space). Use that existing folder instead of creating new ones.
+data_file = os.path.join(base_dir, '..', 'base data', 'TrainDistancesDelft_NSPrices_NSTravelTime.csv')
+if not os.path.exists(data_file):
+  raise FileNotFoundError(f"Required data file not found: {data_file}\n" \
+              "Make sure you run the script from the project folder or that the file exists.")
+df = pd.read_csv(data_file)
 df.columns = [c.strip() for c in df.columns]
 df = df.rename(columns={
   'Distance (km)': 'distance_km',
@@ -41,14 +50,16 @@ def train_cost_per_city(df: 'pd.DataFrame') -> 'pd.Series':
 
 
 def Train_Travel_Time_per_city(df: 'pd.DataFrame') -> 'pd.Series':
-  """Return total travel time per city (train travel time + 10 minutes bike ride).
+  """Return train travel time per city (minutes).
 
-  Expects 'city' and 'travel_time_min' columns. Returns minutes as numeric.
+  Adds 10 minutes to the reported train travel time to represent the bike
+  transfer from Delft station to campus (one-way). Returns minutes as numeric.
   """
   if 'city' not in df.columns or 'travel_time_min' not in df.columns:
     raise KeyError("DataFrame must contain 'city' and 'travel_time_min' columns")
-  # return raw train travel time (minutes) without additional bike time
-  total = pd.to_numeric(df['travel_time_min'], errors='coerce')
+  base = pd.to_numeric(df['travel_time_min'], errors='coerce')
+  # add 10 minutes one-way for the bike transfer to/from campus
+  total = base + 10
   return pd.Series(total.values, index=df['city'].values, name='train_travel_time_min')
 
 
@@ -71,15 +82,37 @@ except Exception as e:
 # --- simplified plotting -------------------------------------------------
 import os
 
-FIG_DIR = 'figures'
-os.makedirs(FIG_DIR, exist_ok=True)
+# Use the existing figures/Train folder (capital T) that already exists in the repo.
+FIG_DIR = os.path.join(base_dir, '..', 'figures', 'Train')
+# Do not create folders programmatically; assume the project's folder structure
+# is already in place and files should be written to the existing locations.
 # Set to True if you want the script to show plots interactively after saving.
 # In some environments (headless servers, or certain IDE terminals) showing
 # may not work; set to False to only save files.
 SHOW_PLOTS = False
 
 # days per month (average working days to Delft); changeable variable
-DAYS_PER_MONTH = 23
+DAYS_PER_MONTH = 18
+
+# --- Subscriptions (toggles only) --------------------------------------
+# These variables allow toggling subscription scenarios for future analysis.
+# They are declared here and NOT applied to the current cost calculations
+# unless you explicitly enable them in code below.
+# 1) daluren (off-peak) subscription: 40% discount outside peak hours, costs 5.90 EUR/month
+DALUREN_ENABLED = False
+DALUREN_COST_PER_MONTH = 5.90
+DALUREN_DISCOUNT = 0.40
+
+# 2) altijd korting subscription: 20% discount during peak hours (we consider only the 20%)
+# costs 28.50 EUR/month
+ALTIJD_KORTING_ENABLED = True
+ALTIJD_COST_PER_MONTH = 28.50
+ALTIJD_PEAK_DISCOUNT = 0.20
+
+# NS corporate yellow for plots (Nederlandse Spoorwegen)
+NS_YELLOW = '#FFD400'
+
+# current graphs. The current plots are labelled as peak-hour scenarios.
 
 
 def compute_ticks(minv, maxv, target_ticks=8):
@@ -120,13 +153,45 @@ def compute_ticks(minv, maxv, target_ticks=8):
 def simple_scatter(x, y, labels, xlabel, ylabel, title, fname):
   """Create a simple scatter plot with city name labels and grid ticks every 10."""
   plt.figure(figsize=(7, 5))
-  plt.scatter(x, y, c='C0')
+  # use NS yellow for points with a thin black edge for legibility
+  plt.scatter(x, y, c=NS_YELLOW, edgecolors='k')
   # annotate points with city names (simple offset)
   # stagger labels slightly to reduce overlap: alternate up/down offsets
+  # improved label placement: if points are close, shift labels vertically
+  # compute data ranges to set a proximity threshold
+  try:
+    xr = float(np.nanmax(x) - np.nanmin(x))
+    yr = float(np.nanmax(y) - np.nanmin(y))
+  except Exception:
+    xr = 1.0
+    yr = 1.0
+  if xr == 0:
+    xr = 1.0
+  if yr == 0:
+    yr = 1.0
+  # proximity threshold: use a larger fraction (6%) so nearby city labels
+  # like Rotterdam/The Hague/Utrecht get separated more aggressively
+  threshold = math.hypot(xr * 0.06, yr * 0.06)
+  placed = []
   for i, (xi, yi, lab) in enumerate(zip(x, y, labels)):
-    yoff = 0.5 if i % 2 == 0 else -0.5
-    xoff = 0.5
+    # count how many already-placed points are within threshold
+    close_count = 0
+    for (xj, yj) in placed:
+      if math.hypot(xi - xj, yi - yj) < threshold:
+        close_count += 1
+    # vertical offset based on number of close points (alternate sign)
+    # increase vertical step for dense clusters
+    vstep = yr * 0.04
+    if close_count == 0:
+      yoff = 0
+    else:
+      # alternate up/down and increase magnitude when multiple overlap
+      sign = 1 if (close_count % 2) == 1 else -1
+      yoff = sign * ( (close_count + 1) // 2 ) * vstep
+    # slightly larger horizontal offset for dense clusters to avoid vertical-only stacking
+    xoff = xr * 0.015
     plt.text(xi + xoff, yi + yoff, lab, fontsize=7)
+    placed.append((xi, yi))
   plt.xlabel(xlabel)
   plt.ylabel(ylabel)
   plt.title(title)
@@ -190,46 +255,16 @@ plot_df = df[['city', 'distance_km', 'ns_fare_eur', 'travel_time_min']].dropna()
 cities = plot_df['city'].astype(str).values
 distance = plot_df['distance_km'].values
 cost = plot_df['ns_fare_eur'].values
-time = plot_df['travel_time_min'].values
-
-# Print functions (very simple) so output appears in the terminal
-'''
-def print_cost_vs_distance(df):
-  print('\nCost vs Distance (city, distance_km, ns_fare_eur):')
-  for city, dist, c in df[['city', 'distance_km', 'ns_fare_eur']].itertuples(index=False):
-    print(f"{city:20} {dist:6.0f} km   {c:5.2f} EUR")
-'''
-'''
-def print_cost_vs_time(df):
-  print('\nCost vs Time (city, travel_time_min, ns_fare_eur):')
-  for city, t, c in df[['city', 'travel_time_min', 'ns_fare_eur']].itertuples(index=False):
-    print(f"{city:20} {t:6.0f} min  {c:5.2f} EUR")
-'''
-'''
-def print_distance_vs_time(df):
-  print('\nDistance vs Time (city, travel_time_min, distance_km):')
-  for city, t, dist in df[['city', 'travel_time_min', 'distance_km']].itertuples(index=False):
-    print(f"{city:20} {t:6.0f} min  {dist:6.0f} km")
-'''
-
-
-# 1) Cost vs Distance (cost on y-axis, distance on x-axis)
-simple_scatter(distance, cost, cities, 'Distance (km)', 'Train cost (EUR)',
-               'Cost vs Distance (per city per trip to Delft)', 'cost_vs_distance.png')
-
-# 2) Cost vs Time (cost on y-axis, time on x-axis)
-simple_scatter(time, cost, cities, 'Train travel time (min)', 'Train cost (EUR)',
-               'Cost vs Time (per city per trip to Delft)', 'cost_vs_time.png')
-
-# 3) Distance vs Time (distance on y-axis, time on x-axis)
-simple_scatter(time, distance, cities, 'Train travel time (min)', 'Distance (km)',
-               'Distance vs Time (per city per trip to Delft)', 'distance_vs_time.png')
+# add 10 minutes one-way to represent bike transfer station <-> campus
+time = plot_df['travel_time_min'].values + 10
+# --- Basic bar charts --------------------------------------------------
 
 # Create bar charts with cities on x-axis
 def simple_bar(values, city_names, ylabel, title, fname):
   """Create a simple bar chart with cities on x-axis."""
   plt.figure(figsize=(10, 5))
-  bars = plt.bar(city_names, values)
+  # NS yellow bars with black edge
+  bars = plt.bar(city_names, values, color=NS_YELLOW, edgecolor='k')
   plt.xticks(rotation=45, ha='right')
   plt.ylabel(ylabel)
   plt.title(title)
@@ -283,15 +318,11 @@ cost_rt = cost * 2
 
 # 1. Time bar chart (roundtrip)
 simple_bar(time_rt, cities, 'Travel time (minutes)',
-          'Train Travel Time by City (per roundtrip to and from Delft)', 'time_bars_roundtrip.png')
+          'Train Travel Time by City (per roundtrip to and from Delft) [peak hour]', 'time_bars_roundtrip_peak.png')
 
-# 2. Distance bar chart (roundtrip)
-simple_bar(distance_rt, cities, 'Distance (km)',
-          'Distance by City (per roundtrip to and from Delft)', 'distance_bars_roundtrip.png')
-
-# 3. Cost bar chart (roundtrip)
+# 2. Cost bar chart (roundtrip)
 simple_bar(cost_rt, cities, 'Cost (EUR)',
-          'Train Cost by City (per roundtrip to and from Delft)', 'cost_bars_roundtrip.png')
+          'Train Cost by City (per roundtrip to and from Delft) (EUR) [peak hour]', 'cost_bars_roundtrip_peak.png')
 
 
 # --- Monthly bar charts (readable y-axis) --------------------------------
@@ -302,38 +333,81 @@ simple_bar(cost_rt, cities, 'Cost (EUR)',
 # Compute monthly values based on round-trip per day multiplied by DAYS_PER_MONTH
 time_month = time_rt * DAYS_PER_MONTH
 distance_month = distance_rt * DAYS_PER_MONTH
+
+# add monthly bike cost: 17.90 EUR per month -> convert to per day when adding to daily
+MONTHLY_BIKE_COST = 17.90
+DAILY_BIKE_COST = MONTHLY_BIKE_COST / 30.0
+# add daily bike cost once per day to the roundtrip cost (daily addition)
+cost_rt = cost_rt + DAILY_BIKE_COST
 cost_month = cost_rt * DAYS_PER_MONTH
 
 # Generate monthly bar charts (readable y-axis)
 print('\nGenerating monthly bar charts...')
 simple_bar(time_month, cities, 'Travel time per month (minutes)',
-           'Train Travel Time per Month by City', 'time_bars_month.png')
-
-simple_bar(distance_month, cities, 'Distance per month (km)',
-           'Distance per Month by City', 'distance_bars_month.png')
+           'Train Travel Time per Month by City [peak hour]', 'time_bars_month_peak.png')
 
 simple_bar(cost_month, cities, 'Cost per month (EUR)',
-           'Cost per Month by City', 'cost_bars_month.png')
+           'Cost per Month by City (EUR) [peak hour]', 'cost_bars_month_peak.png')
 
-# 1) Train cost per month (y) vs travel time per day (x)
-simple_scatter(time, cost_month, cities,
-               'Train travel time per day (min)', 'Train cost per month (EUR)',
-               'Cost per month vs time per day', 'cost_month_vs_time_day.png')
+# 1) Train cost per day (y) vs travel time per day (x)
+simple_scatter(time, cost_rt, cities,
+               'Train travel time per day (min)', 'Train cost per day (EUR)',
+               'Cost per day vs time per day [peak hour]', 'cost_day_vs_time_day_peak.png')
 
 # 2) Train cost per month (y) vs travel time per month (x)
 simple_scatter(time_month, cost_month, cities,
                'Train travel time per month (min)', 'Train cost per month (EUR)',
-               'Cost per month vs time per month', 'cost_month_vs_time_month.png')
+               'Cost per month vs time per month [peak hour]', 'cost_month_vs_time_month_peak.png')
 
-# 3) Distance per month (y) vs travel time per month (x)
-simple_scatter(time_month, distance_month, cities,
-               'Train travel time per month (min)', 'Distance per month (km)',
-               'Distance per month vs time per month', 'distance_month_vs_time_month.png')
+# --- Export summary CSV -------------------------------------------------
+# Build a small DataFrame with daily and monthly times and costs
+# Create simplified summary with only the requested columns:
+# city, time_per_month_min, cost_per_month_eur
+summary_df = pd.DataFrame({
+  'city': cities,
+  'time_per_month_min': time_month,
+  'cost_per_month_eur': cost_month
+})
 
-# 4) Cost per month (y) vs distance per month (x)
-simple_scatter(distance_month, cost_month, cities,
-               'Distance per month (km)', 'Train cost per month (EUR)',
-               'Cost per month vs distance per month', 'cost_month_vs_distance_month.png')
+out_file = os.path.join(base_dir, '..', 'processed_data', 'train_monthly_summary.csv')
+summary_df.to_csv(out_file, index=False)
+print(f"Saved simplified monthly summary CSV: {out_file}")
+# If daluren discount is enabled, create a separate CSV applying 40% discount
+if DALUREN_ENABLED:
+  # apply 40% discount to the NS fare component (per one-way trip)
+  fare = plot_df['ns_fare_eur'].values
+  fare_discounted = fare * (1.0 - DALUREN_DISCOUNT)
+  # daily roundtrip cost: discounted fare *2 + daily bike cost
+  cost_rt_daluren = fare_discounted * 2 + DAILY_BIKE_COST
+  # monthly cost plus the DALUREN subscription fee (one-time per month)
+  cost_month_daluren = cost_rt_daluren * DAYS_PER_MONTH + DALUREN_COST_PER_MONTH
+  daluren_df = pd.DataFrame({
+    'city': cities,
+    'time_per_month_min': time_month,
+    'cost_per_month_eur_daluren': cost_month_daluren
+  })
+  dal_file = os.path.join(base_dir, '..', 'processed_data', 'daluren_40_discount.csv')
+  daluren_df.to_csv(dal_file, index=False)
+  print(f"Saved DALUREN 40% discount CSV: {dal_file}")
+  
+# If ALTIJD subscription is enabled, create a separate CSV applying the peak-hour 20% discount
+if ALTIJD_KORTING_ENABLED:
+  # apply 20% discount to the NS fare component (per one-way trip)
+  fare = plot_df['ns_fare_eur'].values
+  fare_discounted_peak = fare * (1.0 - ALTIJD_PEAK_DISCOUNT)
+  # daily roundtrip cost: discounted fare *2 + daily bike cost
+  cost_rt_altijd = fare_discounted_peak * 2 + DAILY_BIKE_COST
+  # monthly total plus subscription fee
+  cost_month_altijd = cost_rt_altijd * DAYS_PER_MONTH + ALTIJD_COST_PER_MONTH
+  altijd_df = pd.DataFrame({
+    'city': cities,
+    'time_per_month_min': time_month,
+    'cost_per_month_eur_altijd_peak20': cost_month_altijd
+  })
+  altijd_file = os.path.join(base_dir, '..', 'processed_data', 'altijd_20_peak_discount.csv')
+  altijd_df.to_csv(altijd_file, index=False)
+  print(f"Saved ALTIJD 20% peak discount CSV: {altijd_file}")
+ 
 
 
 
