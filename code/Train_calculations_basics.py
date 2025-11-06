@@ -7,7 +7,9 @@ import os
 # Resolve data file path relative to this script so the script works
 # regardless of the current working directory when invoked.
 base_dir = os.path.dirname(os.path.abspath(__file__))
-data_file = os.path.join(base_dir, '..', 'processed_data', 'TrainDistancesDelft_NSPrices_NSTravelTime.csv')
+# The repository contains the raw input under a directory named exactly 'base data'
+# (note the space). Use that existing folder instead of creating new ones.
+data_file = os.path.join(base_dir, '..', 'base data', 'TrainDistancesDelft_NSPrices_NSTravelTime.csv')
 if not os.path.exists(data_file):
   raise FileNotFoundError(f"Required data file not found: {data_file}\n" \
               "Make sure you run the script from the project folder or that the file exists.")
@@ -80,8 +82,10 @@ except Exception as e:
 # --- simplified plotting -------------------------------------------------
 import os
 
-FIG_DIR = os.path.join(base_dir, '..', 'figures', 'train')
-os.makedirs(FIG_DIR, exist_ok=True)
+# Use the existing figures/Train folder (capital T) that already exists in the repo.
+FIG_DIR = os.path.join(base_dir, '..', 'figures', 'Train')
+# Do not create folders programmatically; assume the project's folder structure
+# is already in place and files should be written to the existing locations.
 # Set to True if you want the script to show plots interactively after saving.
 # In some environments (headless servers, or certain IDE terminals) showing
 # may not work; set to False to only save files.
