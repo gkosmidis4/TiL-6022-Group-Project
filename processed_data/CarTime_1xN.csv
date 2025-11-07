@@ -1,2 +1,13 @@
-,Amsterdam Centraal,Rotterdam Centraal,Den Haag Centraal,Utrecht Centraal,Eindhoven Centraal,Tilburg Centraal,Almere Centrum,Groningen Centraal,Breda Centraal,Nijmegen Centraal,Leeuwarden Centraal,Maastricht Centraal
-mean_time,2867.4,923.4,826.2,2575.8,4957.2,3693.6,3402.0,8310.6,2770.2,4957.2,6949.8,7435.8
+City,CarTime_min_per_month
+Amsterdam Centraal,2867.4
+Rotterdam Centraal,923.4000000000001
+Den Haag Centraal,826.2
+Utrecht Centraal,2575.8
+Eindhoven Centraal,4957.200000000001
+Tilburg Centraal,3693.6000000000004
+Almere Centrum,3402.0
+Groningen Centraal,8310.6
+Breda Centraal,2770.2000000000003
+Nijmegen Centraal,4957.200000000001
+Leeuwarden Centraal,6949.8
+Maastricht Centraal,7435.8
