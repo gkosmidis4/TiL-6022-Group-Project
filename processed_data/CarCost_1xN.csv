@@ -1,2 +1,13 @@
-,Amsterdam Centraal,Rotterdam Centraal,Den Haag Centraal,Utrecht Centraal,Eindhoven Centraal,Tilburg Centraal,Almere Centrum,Groningen Centraal,Breda Centraal,Nijmegen Centraal,Leeuwarden Centraal,Maastricht Centraal
-CarCost_EUR_per_month,357.77,221.94,207.12,372.74,521.18,430.11,410.9,831.18,326.87,517.73,700.65,844.3
+City,CarCost_EUR_per_month
+Amsterdam Centraal,357.7680715274249
+Rotterdam Centraal,221.94186838673818
+Den Haag Centraal,207.1175336227897
+Utrecht Centraal,372.74303004291846
+Eindhoven Centraal,521.175270386266
+Tilburg Centraal,430.1061030042918
+Almere Centrum,410.89671244635196
+Groningen Centraal,831.1849699570816
+Breda Centraal,326.8749871244635
+Nijmegen Centraal,517.732718172146
+Leeuwarden Centraal,700.6491387730043
+Maastricht Centraal,844.296655218412

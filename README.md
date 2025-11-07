@@ -11,6 +11,8 @@
 
 **Course:** TIL6022 – TIL Python Programming
 
+**Repository Link:** https://github.com/gkosmidis4/TiL-6022-Group-Project/
+
 **TU Delft**
 
 
@@ -19,11 +21,13 @@ This project investigates whether owning and using a private car is a worthwhile
 By comparing both modes of transport in terms of monthly cost and total travel time, this study aims to provide data-driven insights that support informed commuting decisions.
 
  
-## 2. Research Objectives
-- Quantify and compare commuting costs and travel times for car vs. train.
-- Identify threshold distances where one mode becomes more efficient.
-- Assess the impact of subscriptions, fuel prices, and delays on outcomes.
-- Provide practical recommendations for student commuters.
+## 2. Repository Content:
+- base data: containing datasets we collected.
+- processed data: containing datasets we filtered or created.
+- code: containing all the python scripts of calculations, matrix generator and visualization of data.
+- figures: containing all the car/train/comparison graphs.
+- main report: the main report ipynb file and pdf/html file.
+- README: readme file with instructions.
 
 
 ## 3. Data Sources
