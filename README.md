@@ -38,7 +38,7 @@ All datasets are publicly available or manually extracted from reliable online s
 | Train distances, travel times & fares | [NS website](https://www.ns.nl/) |
 | Fuel prices | [CBS – Pump price daily](https://www.cbs.nl/nl-nl/maatwerk/2006) |
 | Car information | [Marktplaats](https://www.marktplaats.nl) |
-| Insurance | [Geld.nl Datamonitor](https://www.geld.nl/) |
+| Insurance | [Independer](https://www.independer.nl/autoverzekering/intro.aspx) |
 | Road taxes | [Belastingdienst – Motorrijtuigenbelasting](https://www.belastingdienst.nl/wps/wcm/connect/nl/auto-en-motor) |
 | Parking permits | Municipal websites |
 | Train disruptions / delays | [Rijden de Treinen Open Data](https://www.rijdendetreinen.nl/) |
@@ -87,7 +87,7 @@ Key parameters:
 | Start point     | Central station of each city |
 | End point       | TU Delft campus |
 | Car             | Toyota Aygo 2013 (23.3 km/l, €59.44/month maintenance) |
-| Congestion      | +35% added travel time |
+| Congestion      | +35% added travel time (TomTom Traffic Index 2024) |
 | Train           | +10 min bike transfer to campus (Swapfiets €17.90/month) |
 | Train delays    | 8.5% of trains delayed >5 min, not included quantitatively |
 
