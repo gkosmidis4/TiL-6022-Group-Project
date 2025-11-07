@@ -76,7 +76,7 @@ To regenerate the car distance and travel time matrices:
 2. Generate a free API key  
 3. Open the notebook `#1_Matrix_generator.ipynb`  
 4. Replace the placeholder API key with your own key  
-5. Run the notebook to produce updated `CarDistance_matrix.csv` and `CarTime_matrix.csv` files  
+5. Run the notebook to produce updated `CarDistance_matrix.csv` and `CarTime_matrix.csv` files. Please note that this could give slightly different outcomes. 
 
 Key parameters:
 
