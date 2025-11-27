@@ -1,11 +1,5 @@
 # Car vs. Train Travel to Delft: Comparative Study
 
-**Group 7:**
-- Julian van Heijningen
-- Georgios Kosmidis
-- Tristan Roussou
-- Mairah Tirtamenawi
-- Michiel de Veld
 
 **Date:** 7 November 2025
 
